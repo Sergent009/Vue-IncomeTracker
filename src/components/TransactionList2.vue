@@ -10,23 +10,14 @@
 </template>
 
 <script>
-import {defineProps} from 'vue'
 
-    export default {
-        name: 'TransactionList2',
+export default {
+    name: 'TransactionList2',
 
-       setup(){
-        const props = defineProps({
-            transactions: {
-                type:Array,
-                required: true
-            }
-        })
 
-        return{
-            props
-        }
-       }
+    props: ['transactions'],
+
+
     }
 </script>
 

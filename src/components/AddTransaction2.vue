@@ -18,8 +18,9 @@
 </template>
 
 <script>
+
     export default {
-        name: 'AddTransaction2'
+        name: 'AddTransaction2',
     }
 </script>
 

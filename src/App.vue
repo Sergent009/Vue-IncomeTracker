@@ -2,9 +2,9 @@
 
 <MyHeader2 />
 <div class="container">
-  <MyBalance2 />
-  <IncomeExpense2 />
-  <TransactionList2 :transactions="transactions" /> <!-- passing the transaction as a prop -->
+  <MyBalance2 :total="total" />
+  <IncomeExpense2 :income="income" :expense="expense" />
+  <TransactionList2 :transactions="transactions" />
   <AddTransaction2 />
 </div>
 
@@ -17,7 +17,7 @@ import MyBalance2 from './components/MyBalance2.vue'
 import IncomeExpense2 from './components/IncomeExpense2.vue'
 import TransactionList2 from './components/TransactionList2.vue'
 import AddTransaction2 from './components/AddTransaction2.vue'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 export default {
   name: 'App',
@@ -28,18 +28,42 @@ export default {
     TransactionList2,
     AddTransaction2
   },
+  setup(){
+    const transactions = ref([
+      {id: 1, text: 'Flower', amount: -19.99},
+      {id: 2, text: 'Salary', amount: 299.97},
+      {id: 3, text: 'Book', amount: -10},
+      {id: 4, text: 'Camera', amount: 150},
+      ])
 
-    setup(){
-        const transactions = ref([
-            {id: 1, text: 'Flower', amount: -19.99},
-            {id: 2, text: 'Salary', amount: 299.97},
-            {id: 3, text: 'Book', amount: -10},
-            {id: 4, text: 'Camera', amount: 150},
-            ])
-            return{
-                transactions
-            }
-     }
+      // get total balance
+      const total = computed(() => {
+        return transactions.value.reduce((acc, transaction) =>{
+        return acc + transaction.amount
+        }, 0)
+      })
+
+      // get income
+      const income = computed(() => {
+        return transactions.value.filter((transaction) => transaction.amount > 0).reduce((acc, transaction) => {
+          return acc + transaction.amount
+        }, 0).toFixed(2)
+      })
+
+      // get expense
+      const expense = computed(() => {
+        return transactions.value.filter((transaction) => transaction.amount < 0).reduce((acc, transaction) =>{
+          return acc + transaction.amount
+        }, 0).toFixed(2)
+      })
+
+      return{
+        transactions,
+        total,
+        income,
+        expense
+      }
+    }
 }
 </script>
 
