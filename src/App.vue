@@ -6,6 +6,7 @@
   <IncomeExpense2 :income="income" :expense="expense" />
   <TransactionList2 :transactions="transactions" />
   <AddTransaction2 />
+  
 </div>
 
 
