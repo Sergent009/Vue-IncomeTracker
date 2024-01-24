@@ -4,8 +4,8 @@
 <div class="container">
   <MyBalance2 :total="total" />
   <IncomeExpense2 :income="income" :expense="expense" />
-  <TransactionList2 :transactions="transactions" />
-  <AddTransaction2 />
+  <TransactionList2 :transactions="transactions" @transactionDeleted="handleTransactionDeleted" />
+  <AddTransaction2 @transactionSubmitted = "handleTransactionSubmitted" />
   
 </div>
 
@@ -18,7 +18,7 @@ import MyBalance2 from './components/MyBalance2.vue'
 import IncomeExpense2 from './components/IncomeExpense2.vue'
 import TransactionList2 from './components/TransactionList2.vue'
 import AddTransaction2 from './components/AddTransaction2.vue'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 export default {
   name: 'App',
@@ -30,12 +30,15 @@ export default {
     AddTransaction2
   },
   setup(){
-    const transactions = ref([
-      {id: 1, text: 'Flower', amount: -19.99},
-      {id: 2, text: 'Salary', amount: 299.97},
-      {id: 3, text: 'Book', amount: -10},
-      {id: 4, text: 'Camera', amount: 150},
-      ])
+    const transactions = ref([])
+
+      onMounted(() => {
+        const savedTransactions = JSON.parse(localStorage.getItem('transactions'))
+
+        if(savedTransactions){
+          transactions.value = savedTransactions
+        }
+      })
 
       // get total balance
       const total = computed(() => {
@@ -58,11 +61,41 @@ export default {
         }, 0).toFixed(2)
       })
 
+      // add transaction
+      const handleTransactionSubmitted = (transactionData) => {
+        transactions.value.push({
+          id: generateUniqueId(),
+          text: transactionData.text,
+          amount: transactionData.amount
+        })
+
+        saveTransactionsToLocalStorage()
+      }
+
+      // generate unique id
+      const generateUniqueId = () => {
+        return Math.floor(Math.random() * 1000000)
+      }
+
+      // delete transaction
+      const handleTransactionDeleted = (id) => {
+        transactions.value = transactions.value.filter((transaction) => transaction.id !== id)
+
+        saveTransactionsToLocalStorage
+      }
+
+      // save to local storage
+      const saveTransactionsToLocalStorage = () => {
+        localStorage.setItem('transactions', JSON.stringify(transactions.value))
+      }
+
       return{
         transactions,
         total,
         income,
-        expense
+        expense,
+        handleTransactionSubmitted,
+        handleTransactionDeleted
       }
     }
 }
