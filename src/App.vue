@@ -81,7 +81,7 @@ export default {
       const handleTransactionDeleted = (id) => {
         transactions.value = transactions.value.filter((transaction) => transaction.id !== id)
 
-        saveTransactionsToLocalStorage
+        saveTransactionsToLocalStorage()
       }
 
       // save to local storage
